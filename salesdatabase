@@ -1,0 +1,82 @@
+You have three tables in a database:
+1. Employees with columns: EmployeeID , FirstName, LastName, DepartmentID
+2. Departments with columns: DepartmentID , DepartmentName
+3. Orders with columns: OrderID , EmployeeID , OrderDate , TotalAmount
+Please choose appropriate DataTypes.
+Write a SQL query to retrieve the total sales amount for each department. Display the
+department name and the total sales amount. Assume that the sales representative
+information is stored in the Employees table, the department information is in the
+Departments table, and the sales orders are in the Orders table.
+
+
+CREATE DATABASE Sales;
+
+-- Use the newly created database
+USE Sales;
+
+-- Create the Departments table
+CREATE TABLE Departments (
+    DepartmentID INT PRIMARY KEY,
+    DepartmentName VARCHAR(100) NOT NULL
+);
+
+-- Create the Employees table
+CREATE TABLE Employees (
+    EmployeeID INT PRIMARY KEY,
+    FirstName VARCHAR(50) NOT NULL,
+    LastName VARCHAR(50) NOT NULL,
+    DepartmentID INT,
+    FOREIGN KEY (DepartmentID) REFERENCES Departments(DepartmentID)
+);
+
+-- Create the Orders table
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY,
+    EmployeeID INT,
+    OrderDate DATE,
+    TotalAmount DECIMAL(10, 2),
+    FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)
+);
+
+-- Insert data into Departments table
+INSERT INTO Departments (DepartmentID, DepartmentName)
+VALUES 
+(1, 'HR'),
+(2, 'IT'),
+(3, 'sales');
+
+-- Insert data into Employees table
+INSERT INTO Employees (EmployeeID, FirstName, LastName, DepartmentID)
+VALUES 
+(1, 'Pavan','kumar', 1),
+(2, 'Virat','Kohli', 2),
+(3, 'Rohith','Sharma', 2),
+(4, 'Prabsh', 'rebel', 3);
+
+-- Insert data into Orders table
+-- Insert data into Orders table
+INSERT INTO Orders (OrderID, EmployeeID, OrderDate, TotalAmount)
+VALUES 
+(1, 1, '2024-03-15', 2000.00),
+(2, 1, '2024-04-20', 1500.00),
+(3, 2, '2024-02-05', 4500.00),
+(4, 3, '2024-01-30', 800.00), 
+(5, 4, '2024-09-11', 5500.00);
+
+SELECT 
+    d.DepartmentName,
+    SUM(o.TotalAmount) AS TotalSalesAmount
+FROM 
+    Orders o
+JOIN 
+    Employees e ON o.EmployeeID = e.EmployeeID
+JOIN 
+    Departments d ON e.DepartmentID = d.DepartmentID
+GROUP BY 
+    d.DepartmentName;
+
+OUTPUT
+DepartmentName   Totalsalesamount
+HR	              3500.00
+IT	              5300.00
+sales            	5500.00
